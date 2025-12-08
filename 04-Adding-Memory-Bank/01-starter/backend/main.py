@@ -71,13 +71,19 @@ class ChatResponse(BaseModel):
     generated_image: Optional[str] = None
 
 # Initialize ADK services with Vertex AI
+# Initialize ADK services with Vertex AI
 AGENT_ENGINE_ID = os.getenv("AGENT_ENGINE_ID")
+USE_MEMORY_BANK = os.getenv("USE_MEMORY_BANK", "false").lower() == "true"
 
-if AGENT_ENGINE_ID:
+if USE_MEMORY_BANK and AGENT_ENGINE_ID:
     logger.info(f"Using Agent Engine ID: {AGENT_ENGINE_ID}")
     # TODO: Create Vertex AI Session Service & Memory Bank Service
 else:
-    logger.warning("AGENT_ENGINE_ID not found. Falling back to InMemory services.")
+    if not USE_MEMORY_BANK:
+        logger.info("USE_MEMORY_BANK is false. Using InMemory services.")
+    else:
+        logger.warning("AGENT_ENGINE_ID not found but USE_MEMORY_BANK is true. Falling back to InMemory services.")
+    
     from google.adk.sessions import InMemorySessionService
     from google.adk.memory import InMemoryMemoryService
     session_service = InMemorySessionService()

@@ -71,9 +71,11 @@ class ChatResponse(BaseModel):
     generated_image: Optional[str] = None
 
 # Initialize ADK services with Vertex AI
+# Initialize ADK services with Vertex AI
 AGENT_ENGINE_ID = os.getenv("AGENT_ENGINE_ID")
+USE_MEMORY_BANK = os.getenv("USE_MEMORY_BANK", "false").lower() == "true"
 
-if AGENT_ENGINE_ID:
+if USE_MEMORY_BANK and AGENT_ENGINE_ID:
     logger.info(f"Using Agent Engine ID: {AGENT_ENGINE_ID}")
     session_service = VertexAiSessionService(
         project=PROJECT_ID, location=LOCATION, agent_engine_id=AGENT_ENGINE_ID
@@ -82,7 +84,11 @@ if AGENT_ENGINE_ID:
         project=PROJECT_ID, location=LOCATION, agent_engine_id=AGENT_ENGINE_ID
     )
 else:
-    logger.warning("AGENT_ENGINE_ID not found. Falling back to InMemory services.")
+    if not USE_MEMORY_BANK:
+        logger.info("USE_MEMORY_BANK is false. Using InMemory services.")
+    else:
+        logger.warning("AGENT_ENGINE_ID not found but USE_MEMORY_BANK is true. Falling back to InMemory services.")
+    
     # TODO: Create Session Service
 
 # TODO: Initialize Runner
@@ -161,11 +167,8 @@ async def chat_endpoint(
         start_time = time.time()
         logger.info(f"Starting runner.run at {start_time}")
         
-        events = runner.run(
-            user_id=user_id,
-            session_id=session_id, 
-            new_message=content
-        )
+        # TODO: Run the Runner
+        
         logger.info(f"runner.run initialized in {time.time() - start_time:.4f}s")
         
         final_response_text = ""

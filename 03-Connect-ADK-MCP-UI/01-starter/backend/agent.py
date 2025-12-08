@@ -131,39 +131,52 @@ from typing import Optional
 
 # ... (existing code)
 
+import asyncio
+
 async def add_session_to_memory(
         callback_context: CallbackContext
 ) -> Optional[types.Content]:
-    """Automatically save completed sessions to memory bank """
+    """Automatically save completed sessions to memory bank in the background"""
     if hasattr(callback_context, "_invocation_context"):
         invocation_context = callback_context._invocation_context
         if invocation_context.memory_service:
-            await invocation_context.memory_service.add_session_to_memory(
-                invocation_context.session
+            # Use create_task to run this in the background without blocking the response
+            asyncio.create_task(
+                invocation_context.memory_service.add_session_to_memory(
+                    invocation_context.session
+                )
             )
+            logger.info("Scheduled session save to memory bank in background")
 
 # Initialize the agent
 # Note: In a real app, you'd likely inject the model client.
 # For this example, we assume the ADK handles the model connection via env vars or default config.
+
+USE_MEMORY_BANK = os.getenv("USE_MEMORY_BANK", "false").lower() == "true"
+
+agent_tools = [
+    update_tree_config,
+    get_tree_state,
+    analyze_image_and_suggest_texture,
+    McpToolset(
+        connection_params=StdioConnectionParams(
+            server_params=StdioServerParameters(
+                command=sys.executable,
+                args=[MCP_SERVER_PATH],
+                env=os.environ.copy() # Pass current env to ensure API keys are available
+            ),
+            timeout=120 # Increase timeout for image generation
+        )
+    )
+]
+
+if USE_MEMORY_BANK:
+    agent_tools.append(PreloadMemoryTool())
+
 christmas_agent = Agent(
     model="gemini-2.5-flash",
     name="christmas_tree_agent",
     instruction=agent_instruction,
-    tools=[
-        update_tree_config,
-        get_tree_state,
-        analyze_image_and_suggest_texture,
-        PreloadMemoryTool(),
-        McpToolset(
-            connection_params=StdioConnectionParams(
-                server_params=StdioServerParameters(
-                    command=sys.executable,
-                    args=[MCP_SERVER_PATH],
-                    env=os.environ.copy() # Pass current env to ensure API keys are available
-                ),
-                timeout=120 # Increase timeout for image generation
-            )
-        )
-    ],
-    after_agent_callback=add_session_to_memory
+    tools=agent_tools,
+    after_agent_callback=add_session_to_memory if USE_MEMORY_BANK else None
 )
