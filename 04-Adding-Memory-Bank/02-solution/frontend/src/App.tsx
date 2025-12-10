@@ -11,7 +11,7 @@ function App() {
 
   // Fetch initial state
   useEffect(() => {
-    fetch('http://localhost:8001/api/state')
+    fetch('/api/state')
       .then(res => res.json())
       .then(data => setTreeState(data))
       .catch(err => console.error("Failed to fetch initial state:", err));

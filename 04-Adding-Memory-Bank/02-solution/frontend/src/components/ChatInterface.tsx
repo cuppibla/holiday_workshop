@@ -67,7 +67,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onStateUpdate }) => {
                 formData.append('file', selectedImage);
             }
 
-            const response = await fetch('http://localhost:8001/api/chat', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 body: formData,
             });
