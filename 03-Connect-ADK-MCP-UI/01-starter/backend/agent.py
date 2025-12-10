@@ -170,13 +170,9 @@ agent_tools = [
     )
 ]
 
-if USE_MEMORY_BANK:
-    agent_tools.append(PreloadMemoryTool())
-
 christmas_agent = Agent(
     model="gemini-2.5-flash",
     name="christmas_tree_agent",
     instruction=agent_instruction,
     tools=agent_tools,
-    after_agent_callback=add_session_to_memory if USE_MEMORY_BANK else None
 )

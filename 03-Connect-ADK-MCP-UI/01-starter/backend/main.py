@@ -10,8 +10,6 @@ from typing import List, Optional
 from dotenv import load_dotenv
 import vertexai
 from google.adk.runners import Runner
-from google.adk.sessions import VertexAiSessionService
-from google.adk.memory import VertexAiMemoryBankService
 from google.genai import types
 from agent import christmas_agent
 
@@ -70,26 +68,8 @@ class ChatResponse(BaseModel):
     response: str
     tree_state: dict
     generated_image: Optional[str] = None
-
-# Initialize ADK services with Vertex AI
-AGENT_ENGINE_ID = os.getenv("AGENT_ENGINE_ID")
-USE_MEMORY_BANK = os.getenv("USE_MEMORY_BANK", "false").lower() == "true"
-
-if USE_MEMORY_BANK and AGENT_ENGINE_ID:
-    logger.info(f"Using Agent Engine ID: {AGENT_ENGINE_ID}")
-    session_service = VertexAiSessionService(
-        project=PROJECT_ID, location=LOCATION, agent_engine_id=AGENT_ENGINE_ID
-    )
-    memory_service = VertexAiMemoryBankService(
-        project=PROJECT_ID, location=LOCATION, agent_engine_id=AGENT_ENGINE_ID
-    )
-else:
-    if not USE_MEMORY_BANK:
-        logger.info("USE_MEMORY_BANK is false. Using InMemory services.")
-    else:
-        logger.warning("AGENT_ENGINE_ID not found but USE_MEMORY_BANK is true. Falling back to InMemory services.")
-    
-    # TODO: Create Session Service
+  
+# TODO: Create Session Service
 
 # TODO: Initialize Runner
 
