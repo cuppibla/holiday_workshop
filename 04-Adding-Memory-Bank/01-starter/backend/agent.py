@@ -170,8 +170,7 @@ agent_tools = [
     )
 ]
 
-if USE_MEMORY_BANK:
-    # TODO: Add PreloadMemoryTool
+# TODO: Add PreloadMemoryTool
 
 christmas_agent = Agent(
     model="gemini-2.5-flash",

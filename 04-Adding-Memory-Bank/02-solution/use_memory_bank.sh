@@ -32,7 +32,7 @@ OUTPUT_FILE=$(mktemp)
 
 # Change to backend directory and run using uv, ensuring we return to previous directory
 pushd backend > /dev/null
-uv run python deploy_agent.py | tee "$OUTPUT_FILE"
+uv run python deploy_agent.py 2>&1 | tee "$OUTPUT_FILE"
 EXIT_CODE=${PIPESTATUS[0]}
 popd > /dev/null
 
@@ -72,21 +72,27 @@ try:
 
     # 1. Update AGENT_ENGINE_ID
     # Matches 'export AGENT_ENGINE_ID=...' and replaces the value
-    if 'export AGENT_ENGINE_ID=' in content:
-        content = re.sub(r'export AGENT_ENGINE_ID=.*', f'export AGENT_ENGINE_ID={new_id}', content)
+    # 1. Update AGENT_ENGINE_ID
+    # Matches 'export AGENT_ENGINE_ID=...' or 'AGENT_ENGINE_ID=...' and replaces the value
+    if re.search(r'(?:export\s+)?AGENT_ENGINE_ID=', content):
+        content = re.sub(r'(?:export\s+)?AGENT_ENGINE_ID=.*', f'AGENT_ENGINE_ID={new_id}', content)
         print(f'Updated AGENT_ENGINE_ID to {new_id}')
     else:
         # Append if not found
-        content += f'\nexport AGENT_ENGINE_ID={new_id}\n'
+        content += f'\nAGENT_ENGINE_ID={new_id}\n'
         print(f'Added AGENT_ENGINE_ID={new_id}')
 
     # 2. Update USE_MEMORY_BANK
-    # Matches specifically 'export USE_MEMORY_BANK=false'
-    if 'export USE_MEMORY_BANK=false' in content:
-        content = content.replace('export USE_MEMORY_BANK=false', 'export USE_MEMORY_BANK=true')
-        print('Updated USE_MEMORY_BANK to true')
-    elif 'export USE_MEMORY_BANK=true' in content:
-        print('USE_MEMORY_BANK is already true')
+    # Matches 'export USE_MEMORY_BANK=false' or 'USE_MEMORY_BANK=false'
+    # We want to set it to TRUE (uppercase) as requested
+    if re.search(r'(?:export\s+)?USE_MEMORY_BANK=false', content):
+        content = re.sub(r'(?:export\s+)?USE_MEMORY_BANK=false', 'USE_MEMORY_BANK=TRUE', content)
+        print('Updated USE_MEMORY_BANK to TRUE')
+    elif re.search(r'(?:export\s+)?USE_MEMORY_BANK=(?:true|TRUE)', content, re.IGNORECASE):
+        # normalize to TRUE if it exists but is lowercase/mixed or just leave it? 
+        # User asked for TRUE. Let's force it to TRUE if it's already true-ish but not TRUE?
+        # Actually simplest is just to check if it's already true-ish.
+        print('USE_MEMORY_BANK is already true/TRUE')
     else:
         # If the variable isn't there or is weird, strictly following instructions to change false to true.
         # If it's incomplete, we might append it.
