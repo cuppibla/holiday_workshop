@@ -26,7 +26,7 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
   const ballsRef = useRef<THREE.InstancedMesh>(null);
   const giftsRef = useRef<THREE.InstancedMesh>(null);
   const lightsRef = useRef<THREE.InstancedMesh>(null);
-  
+
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   // Generate data once
@@ -37,20 +37,23 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
 
     const height = 11; // Slightly smaller than foliage
     const maxRadius = 4.5;
-    
-    // Luxury Colors
-    const gold = new THREE.Color("#D4AF37");
-    const red = new THREE.Color("#8B0000"); // Dark Velvet Red
-    const emerald = new THREE.Color("#004422");
-    const whiteGold = new THREE.Color("#F5E6BF");
-    
-    const palette = [gold, red, gold, whiteGold];
+
+    // Cute / Pastel Palette
+    const pink = new THREE.Color("#FF9AA2");
+    const mint = new THREE.Color("#B5EAD7");
+    const peach = new THREE.Color("#FFDAC1");
+    const lavender = new THREE.Color("#E0BBE4");
+    const babyBlue = new THREE.Color("#92A8D1");
+
+    const palette = [pink, mint, peach, lavender, babyBlue];
 
     for (let i = 0; i < count; i++) {
       const rnd = Math.random();
       let type: OrnamentType = 'ball';
-      if (rnd > 0.8) type = 'gift';
-      if (rnd > 0.9) type = 'light'; // Less lights as geometry, more via bloom
+      if (rnd > 0.9) type = 'light';
+      else if (rnd > 0.8) type = 'gift';
+      // existing logic was: if (rnd > 0.8) type = 'gift'; if (rnd > 0.9) type = 'light';
+      // this means > 0.9 overwrites gift with light. Correct.
 
       // 1. Target Position (Spiral with heavy density at bottom)
       // Use power function to bias distribution toward bottom (lower yNorm values)
@@ -58,10 +61,10 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
       const y = yNorm * height + 0.5;
       const rScale = (1 - yNorm);
       const theta = y * 10 + Math.random() * Math.PI * 2; // Wind around
-      
+
       // Push ornaments slightly outside the foliage radius
       const r = maxRadius * rScale + (Math.random() * 0.5);
-      
+
       const targetPos = new THREE.Vector3(
         r * Math.cos(theta),
         y,
@@ -129,17 +132,17 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
         // Interpolation Factor based on individual speed and global delta
         // We use a simple approach: if formed, target is targetPos, else chaosPos
         const dest = isFormed ? d.targetPos : d.chaosPos;
-        
+
         // We actually want to lerp the CURRENT position to the DESTINATION
         // But extracting current position from matrix is expensive every frame for all.
         // Instead, we calculate "current" based on a virtual progress 0-1 driven by state.
-        
+
         // To simulate "physics" (heavy/light), we don't store state per particle here (too complex for this snippet).
         // Instead, we calculate position based on a time-dependent lerp factor.
-        
+
         // However, a simple way to make it feel organic is:
         // Position = Mix(Chaos, Target, SmoothStep(GlobalProgress * speed))
-        
+
         // Let's use a sin wave derived from time for hover, but the main transition is driven by a hidden 'progress' value
         // Since we don't have a global store for animation progress per particle, we approximate using the mode switch time.
         // For a robust system, we'd use a spring library, but here we do manual lerping.
@@ -147,24 +150,24 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
         // Get current matrix position to lerp from? Too expensive.
         // Let's assume a global transition variable `t` that goes 0->1 or 1->0.
         // We will misuse the object's userdata or just calculate purely functional.
-        
+
         // Functional approach:
         // We need an accumulated value. Let's create a visual wobble.
-        
+
         // NOTE: For true interactive physics, we'd use useSprings from react-spring/three, 
         // but for 1000 instances, manual matrix manipulation is better.
         // Here we will simply interpolate between the two static positions based on a "progress" variable
         // that we track manually or approximate.
-        
+
         // Let's read a custom progress from the dataset. 
         // We'll augment the data object with a mutable `currentProgress` property in a closure if possible,
         // but `data` is static.
-        
+
         // Let's just use the `MathUtils.lerp` on the vectors directly inside the loop 
         // by reading the matrix, lerping, writing back.
         ref.current!.getMatrixAt(i, dummy.matrix);
         dummy.matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
-        
+
         const step = delta * d.speed;
         dummy.position.lerp(dest, step);
 
@@ -175,18 +178,17 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
 
         // Rotation
         if (d.type === 'gift') {
-           dummy.rotation.x += delta * 0.5;
-           dummy.rotation.y += delta * 0.2;
+          dummy.rotation.x += delta * 0.5;
+          dummy.rotation.y += delta * 0.2;
         } else {
-           // Balls face out
-           dummy.lookAt(0, dummy.position.y, 0);
+          // Balls face out
+          dummy.lookAt(0, dummy.position.y, 0);
         }
 
         dummy.scale.setScalar(d.scale);
         if (d.type === 'light') {
-           // Pulsate lights
-           const pulse = 1 + Math.sin(time * 5 + d.chaosPos.y) * 0.3;
-           dummy.scale.multiplyScalar(pulse);
+          // Pulsate lights
+          dummy.scale.multiplyScalar(1 + Math.sin(time * 5 + d.chaosPos.y) * 0.3);
         }
 
         dummy.updateMatrix();
@@ -204,22 +206,22 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
 
   return (
     <>
-      {/* Balls: High Gloss Gold/Red */}
+      {/* Balls: Soft Pastel Spheres */}
       <instancedMesh ref={ballsRef} args={[undefined, undefined, ballsData.length]}>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial 
-          roughness={0.1} 
-          metalness={0.9} 
-          envMapIntensity={1.5}
+        <meshStandardMaterial
+          roughness={0.4}
+          metalness={0.2}
+          envMapIntensity={0.8}
         />
       </instancedMesh>
 
-      {/* Gifts: Cubes with ribbons (simplified as cubes) */}
+      {/* Gifts: Faceted 'Jewels' or 'Candies' (Dodecahedron) */}
       <instancedMesh ref={giftsRef} args={[undefined, undefined, giftsData.length]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial 
-          roughness={0.3} 
-          metalness={0.5} 
+        <dodecahedronGeometry args={[1, 0]} />
+        <meshStandardMaterial
+          roughness={0.3}
+          metalness={0.3}
           color="#white" // Tinted by instance color
         />
       </instancedMesh>
@@ -227,7 +229,7 @@ export const Ornaments: React.FC<OrnamentsProps> = ({ mode, count }) => {
       {/* Lights: Emissive small spheres */}
       <instancedMesh ref={lightsRef} args={[undefined, undefined, lightsData.length]}>
         <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           emissive="white"
           emissiveIntensity={2}
           toneMapped={false}

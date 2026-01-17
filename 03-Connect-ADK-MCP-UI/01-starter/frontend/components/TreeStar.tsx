@@ -85,11 +85,11 @@ export const TreeStar: React.FC<TreeStarProps> = ({ mode }) => {
       <mesh rotation={[0, 0, 0]}>
         <extrudeGeometry args={[starShape, extrudeSettings]} />
         <meshStandardMaterial
-          color="#D4AF37"
-          emissive="#FFD700"
+          color="#FDFD96"
+          emissive="#FFFFAA"
           emissiveIntensity={2}
-          metalness={0.9}
-          roughness={0.1}
+          metalness={0.4}
+          roughness={0.3}
           toneMapped={false}
         />
       </mesh>
@@ -97,7 +97,7 @@ export const TreeStar: React.FC<TreeStarProps> = ({ mode }) => {
       {/* Point Light for glow effect */}
       <pointLight
         ref={lightRef}
-        color="#FFD700"
+        color="#FDFD96"
         intensity={2}
         distance={5}
         decay={2}

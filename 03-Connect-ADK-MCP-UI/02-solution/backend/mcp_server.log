@@ -66,3 +66,18 @@ A young, chunky cat with short, dense blue-grey fur, large, round golden-amber e
 2025-12-11 20:02:37,969 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
 2025-12-11 20:27:03,548 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
 2025-12-11 20:27:04,980 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:20:13,935 - google_genai._api_client - INFO - The user provided project/location will take precedence over the Vertex AI API key from the environment variable.
+2026-01-17 08:20:13,984 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:20:20,249 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:24:07,944 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:24:12,622 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:24:12,627 - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2026-01-17 08:24:12,639 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:24:20,135 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2026-01-17 08:24:20,139 - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2026-01-17 08:24:20,139 - __main__ - INFO - Analyzing person features from: /Users/qingyue/Documents/holiday_workshop/03-Connect-ADK-MCP-UI/02-solution/backend/static/uploads/IMG_6147.jpeg
+2026-01-17 08:24:20,171 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-17 08:30:31,322 - google_genai._api_client - INFO - The user provided project/location will take precedence over the Vertex AI API key from the environment variable.
+2026-01-17 08:30:51,325 - google_genai._api_client - INFO - The user provided project/location will take precedence over the Vertex AI API key from the environment variable.
+2026-01-17 08:30:51,354 - mcp_server - INFO - Analyzing person features from: /Users/qingyue/Documents/holiday_workshop/03-Connect-ADK-MCP-UI/02-solution/backend/static/uploads/IMG_6147.jpeg
+2026-01-17 08:30:51,363 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.

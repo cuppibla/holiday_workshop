@@ -14,7 +14,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle }) => {
 
       {/* Header */}
       <header className="flex flex-col items-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5E6BF] to-[#D4AF37] font-serif drop-shadow-lg tracking-wider text-center">
+        <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FF9AA2] via-[#E0BBE4] to-[#92A8D1] font-serif drop-shadow-lg tracking-wider text-center">
           Happy Holiday
         </h1>
       </header>
@@ -44,10 +44,10 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle }) => {
       </div> */}
 
       {/* Decorative Corners */}
-      <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-[#D4AF37] opacity-50"></div>
-      <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-[#D4AF37] opacity-50"></div>
-      <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-[#D4AF37] opacity-50"></div>
-      <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-[#D4AF37] opacity-50"></div>
+      <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-[#FDFD96] opacity-50"></div>
+      <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-[#FDFD96] opacity-50"></div>
+      <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-[#FDFD96] opacity-50"></div>
+      <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-[#FDFD96] opacity-50"></div>
     </div>
   );
 };
